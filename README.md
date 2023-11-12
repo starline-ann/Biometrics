@@ -1,9 +1,6 @@
 # Biometrics
 Anti-spoof algorithm
 
-Data:
-
-https://github.com/ZhangYuanhan-AI/CelebA-Spoof
 
 # Inference
 1. Place images for testing in `data/my_test/`
@@ -16,6 +13,12 @@ https://github.com/ZhangYuanhan-AI/CelebA-Spoof
 
 # Training
 
-Write the correct path for data (path_local) in config.py
+Write the correct paths for data (path_local) in config.py
 
-train.py
+Load the Data:
+
+https://github.com/ZhangYuanhan-AI/CelebA-Spoof
+
+Run from project root: 
+
+```train.py```
