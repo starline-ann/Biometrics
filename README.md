@@ -22,3 +22,9 @@ https://github.com/ZhangYuanhan-AI/CelebA-Spoof
 Run from project root: 
 
 ```train.py```
+
+# links
+
+[Presentation](https://docs.google.com/presentation/d/1OsWTKHuWqyzJY5QuILpMl7KXF-wb59mlq48AoqmYqF4)
+
+[Video demonstration](https://drive.google.com/file/d/1-5gc4cWe3OZ6t8y_U1Wyo8beI3_7mYhQ)
