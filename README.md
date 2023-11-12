@@ -1,6 +1,10 @@
 # Biometrics
 Anti-spoof algorithm
 
+Data:
+
+https://github.com/ZhangYuanhan-AI/CelebA-Spoof
+
 # Inference
 Place image data for prediction in 'data/my_test/'
 
