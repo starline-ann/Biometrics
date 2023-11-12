@@ -3,12 +3,11 @@ import pandas as pd
 
 
 def get_filenames_from_json(path_json, sample_percentage):
-
     # col --> C0 - C1 - C2 - ... - C43
-    col = ['C{}'.format(n) for n in range(44)]
+    col = ["C{}".format(n) for n in range(44)]
 
-    #using orient = index --> cause the data structure is dict and the key is the index of data (Ex: file path)
-    df = pd.read_json(path_json, orient='index')
+    # using orient = index --> cause the data structure is dict and the key is the index of data (Ex: file path)
+    df = pd.read_json(path_json, orient="index")
     df.columns = col
 
     # only photo and devises. not masks
@@ -33,11 +32,13 @@ def get_filenames_from_json(path_json, sample_percentage):
     df = df.reset_index()
 
     # rename columns name
-    df.rename(columns={'index': 'Filepath'}, inplace=True)
+    df.rename(columns={"index": "Filepath"}, inplace=True)
 
     # handle data from spoof types to (live - spoof)
-    df = df[['Filepath', 'C40']]
-    df["C40"] = np.where(df["C40"]== 0, 1, 0) # if live (Real) --> 1, else (Spoof) --> 0
+    df = df[["Filepath", "C40"]]
+    df["C40"] = np.where(
+        df["C40"] == 0, 1, 0
+    )  # if live (Real) --> 1, else (Spoof) --> 0
 
     # add data into list so we can iterate to predict the features of each face
     img_paths_X = df.Filepath.tolist()
