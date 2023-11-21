@@ -3,13 +3,14 @@ from torchvision import models
 import torch.nn as nn
 import torch.optim as optim
 from torch.optim import lr_scheduler
+from clearml import Task, Logger
 
 import numpy as np
 from tqdm import tqdm
 import copy
 
 from src.train_test_split import train_loader, val_loader, test_loader
-from src.config import weights_path
+from src.config import epochs, weights_path, project_name, task_name, fine_tuning_mode
 
 
 # evaluation model on one epoch
@@ -73,7 +74,8 @@ def fit_epoch(model, train_loader, criterion, optimizer):
 
 
 # training the model
-def train_model(train_loader, val_loader, model, criterion, opt, scheduler, epochs=25):
+def train_model(train_loader, val_loader, model, criterion, opt, scheduler, epochs, log):
+
     history = []
     log_template = "\nEpoch {ep:03d} train_loss: {t_loss:0.4f} \
     val_loss {v_loss:0.4f} train_acc {t_acc:0.4f} val_acc {v_acc:0.4f}"
@@ -100,11 +102,19 @@ def train_model(train_loader, val_loader, model, criterion, opt, scheduler, epoc
                 )
             )
 
+            # Записываем метрики в ClearML
+            log.report_scalar("Loss", "Train", iteration=epoch, value=train_loss)
+            log.report_scalar("Loss", "Val", iteration=epoch, value=val_loss)
+            
+            log.report_scalar("Accuracy", "Train", iteration=epoch, value=train_acc)
+            log.report_scalar("Accuracy", "Val", iteration=epoch, value=val_acc)
+
             # deep copy the model
             if val_acc > best_acc:
                 best_acc = val_acc
                 best_model_wts = copy.deepcopy(model.state_dict())
 
+    log.report_single_value(name='Best val Accuracy', value=best_acc)
     # load best model weights
     model.load_state_dict(best_model_wts)
 
@@ -147,30 +157,50 @@ if __name__ == "__main__":
 
     # Freeze the pretrained weights for use
     params_to_update = []
-    # for param in model.parameters():
-    #    param.requires_grad = False
-    # for name, param in list(model.named_parameters())[-40:]:
-    for name, param in model.named_parameters():
-        if "classifier" in name:
+    for param in model.parameters():
+        param.requires_grad = False
+    #train only classifier
+    if fine_tuning_mode == 'classifier':
+        for name, param in model.named_parameters():
+            if "classifier" in name:
+                param.requires_grad = True
+                params_to_update.append(param)
+    #train n_layers last layers
+    else:
+        n_layers = int(fine_tuning_mode)
+        for name, param in list(model.named_parameters())[-n_layers:]:
             param.requires_grad = True
             params_to_update.append(param)
-        else:
-            param.requires_grad = False
 
-    # Detect if we have a GPU available
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+    # Check that MPS is available
+    if not torch.backends.mps.is_available():
+        # Detect if we have a GPU available
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    else:
+        device = torch.device("mps")
+
+    print('My device is', device)
     model.to(device)
 
     # loss function
     loss_fn = nn.CrossEntropyLoss()
-
+    # optimizer
     optimizer = optim.Adam(params_to_update, lr=1e-3)
 
     # Multiply learning_rate to 0.1 every 4 epoch
     exp_lr_scheduler = lr_scheduler.StepLR(optimizer, step_size=4, gamma=0.1)
 
-    # training
+    #ClearML connection
+    task = Task.init(
+        project_name=project_name, 
+        task_name=task_name, 
+        auto_connect_frameworks=True
+    )
+    # Инциируем объект логирования
+    log = Logger.current_logger()
 
+    # training
     model, history = train_model(
         train_loader,
         val_loader,
@@ -178,10 +208,12 @@ if __name__ == "__main__":
         criterion=loss_fn,
         opt=optimizer,
         scheduler=exp_lr_scheduler,
-        epochs=10,
+        epochs=epochs,
+        log = log
     )
 
     torch.save(model.state_dict(), weights_path)
 
+    # test
     test_accuracy = test_prediction(model, test_loader)
-    print("test_accuracy = ", test_accuracy)
+    log.report_single_value(name='Test Accuracy', value=test_accuracy)

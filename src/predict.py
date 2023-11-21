@@ -46,11 +46,21 @@ if __name__ == "__main__":
     for file in os.listdir(files_path):
         files.append(str(file))
 
+    fake = []
+    real = []
+
     for name in files:
         name_path = files_path + name
         image = Image.open(name_path)
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
         label = predict_one_sample(my_model, image, device)
-        print("real" if label == 1 else "fake", end="\t")
-        print(name_path)
+        #print("real" if label == 1 else "fake", end="\t")
+        #print(name_path)
+        if label == 1:
+            real.append(name_path[13:-4])
+        else:
+            fake.append(name_path[13:-4])
+    
+    print('real:', *sorted(real))
+    print('fake:', *sorted(fake))
