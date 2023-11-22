@@ -1,14 +1,14 @@
 # path for imgs and labels
 path_train_json = "data/train_label.json"
 path_test_json = "data/test_label.json"
-#path_local = "data/CelebA_Spoof/"
-path_local = "/Users/annafonar/Documents/Programming/Hackathon/Всероссийский хакатон по биометрии/Data/selebA-Spoof/CelebA_Spoof"
+# path to data
+path_local = "data/CelebA_Spoof/"
 
 # place data for prediction here
 files_path = "data/my_test/"
 
 # the percent of data for training
-sample_percentage = 0.2
+sample_percentage = 0.02
 
 # training params
 batch_size = 512

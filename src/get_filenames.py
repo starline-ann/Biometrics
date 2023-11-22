@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
-
+import re
+from src.deduplicator import get_unique_df
+from src.config import sample_percentage
 
 def get_filenames_from_json(path_json, sample_percentage):
     # col --> C0 - C1 - C2 - ... - C43
@@ -9,25 +11,29 @@ def get_filenames_from_json(path_json, sample_percentage):
     # using orient = index --> cause the data structure is dict and the key is the index of data (Ex: file path)
     df = pd.read_json(path_json, orient="index")
     df.columns = col
-
+    
     # only photo and devises. not masks
-    spoof_type = [1, 2, 3, 7, 8, 9]
-    all_types = [0] + spoof_type
+    spoof_types = [1, 2, 3, 7, 8, 9]
+    real_types = [0]
 
-    df = df[df.C40.isin(all_types)]
+    df_real = df[df.C40.isin(real_types)]
+    df_spoof = df[df.C40.isin(spoof_types)]
 
+    # take only unique spoof imgs
+    df_spoof = get_unique_df(df_spoof)
+    
     # As the data very big we will take part from it
-    dataSample = int(df.shape[0] * sample_percentage)
+    dataSample_real = int(df_real.shape[0] * sample_percentage)
+    dataSample_spoof = int(df_spoof.shape[0] * sample_percentage)
 
     # get sample of data into dataframe and reformat it
-    df_real = df[df.C40 == 0].sample(dataSample // 2, random_state=1) # 50% real
-    df_spoof = df[df.C40.isin(spoof_type)].sample(dataSample // 2, random_state=1) # 50% spoof
+    df_real = df_real.sample(dataSample_real, random_state=1)
+    df_spoof = df_spoof.sample(dataSample_spoof, random_state=1)
 
-    #df_real = df_real.append(df_spof)
-    df_real = pd.concat([df_real, df_spoof])
-
+    # concatinate real and spoof dataframes
+    df = pd.concat([df_real, df_spoof])
     # Shuffle dataframe
-    df = df_real.sample(frac=1)
+    df = df.sample(frac=1)
 
     # then reset the index of rows to rename the path of all images files
     df = df.reset_index()
@@ -46,3 +52,7 @@ def get_filenames_from_json(path_json, sample_percentage):
     img_paths_Y = df.C40.tolist()
 
     return (img_paths_X, img_paths_Y)
+
+
+X, Y = get_filenames_from_json("data/test_label.json", sample_percentage)
+print(len(X), len(Y))
