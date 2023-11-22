@@ -4,6 +4,10 @@ Anti-spoof algorithm
 
 # Inference
 
+Use Inference.ipynb
+
+or
+
 1. Place images for testing in `data/my_test/`
 
 2. Ensure `src/config.py` contains correct paths
@@ -25,6 +29,11 @@ For creating .json with unique test and train labels, run: ```python -m src.dedu
 For training run from project root: 
 
 ```python -m src.train```
+
+for convert model in ONNX:
+
+python -m src.convert_to_onnx
+
 
 # links
 

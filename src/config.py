@@ -2,7 +2,7 @@
 files_path = "data/my_test/"
 
 # path to load/save best weights of model and inference
-weights_path = "data/weights4.pth"
+weights_path = "data/weights5.pth"
 
 #train
 
@@ -27,4 +27,6 @@ fine_tuning_mode = '20' # ['10', 'classifier']
 
 #ClearML experiments settings
 project_name = 'Biometrics'
-task_name = 'exp4 unique'
+task_name = 'exp5 unique'
+
+onnx_path = "data/mobilenet.onnx"
