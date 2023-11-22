@@ -2,7 +2,7 @@
 files_path = "data/my_test/"
 
 # path to load/save best weights of model and inference
-weights_path = "data/weights5.pth"
+weights_path = "data/weights4.pth"
 
 #train
 
