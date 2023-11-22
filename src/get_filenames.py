@@ -20,11 +20,11 @@ def get_filenames_from_json(path_json, sample_percentage):
     dataSample = int(df.shape[0] * sample_percentage)
 
     # get sample of data into dataframe and reformat it
-    df_real = df[df.C40 == 0].sample(dataSample // 2, random_state=1)
-    df_spof = df[df.C40.isin(spoof_type)].sample(dataSample // 2, random_state=1)
+    df_real = df[df.C40 == 0].sample(dataSample // 2, random_state=1) # 50% real
+    df_spoof = df[df.C40.isin(spoof_type)].sample(dataSample // 2, random_state=1) # 50% spoof
 
     #df_real = df_real.append(df_spof)
-    df_real = pd.concat([df_real, df_spof])
+    df_real = pd.concat([df_real, df_spoof])
 
     # Shuffle dataframe
     df = df_real.sample(frac=1)
