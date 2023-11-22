@@ -4,6 +4,8 @@ Anti-spoof algorithm based on fine-tuning MobileNet on CelebaSpoof dataset.
 
 The data vas cleaned by [deduplicator](https://github.com/idealo/imagededup)
 
+Test accuracy = 0.88
+
 # Inference
 
 Use `Inference.ipynb`
