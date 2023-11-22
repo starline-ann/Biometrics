@@ -4,6 +4,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.optim import lr_scheduler
 from clearml import Task, Logger
+from sklearn.metrics import roc_auc_score, f1_score, accuracy_score, recall_score, precision_score
 
 import numpy as np
 from tqdm import tqdm
@@ -142,9 +143,15 @@ def test_prediction(model, test_loader):
         return preds, all_labels
 
     preds, labels = predict(model, test_loader)
-    corrects = np.argmax(preds, axis=1) == labels
-    test_accuracy = sum(corrects) / len(corrects)
-    return test_accuracy
+    y_pred = np.argmax(preds, axis=1)
+    #corrects = y_pred == labels
+    #acc = sum(corrects) / len(corrects)
+    roc_auc = roc_auc_score(labels, y_pred)
+    f1 = f1_score(labels, y_pred)
+    acc = accuracy_score(labels, y_pred)
+    rec = recall_score(labels, y_pred)
+    prec = precision_score(labels, y_pred)
+    return roc_auc, f1, acc, rec, prec
 
 
 if __name__ == "__main__":
@@ -215,5 +222,10 @@ if __name__ == "__main__":
     torch.save(model.state_dict(), weights_path)
 
     # test
-    test_accuracy = test_prediction(model, test_loader)
-    log.report_single_value(name='Test Accuracy', value=test_accuracy)
+    roc_auc, f1, acc, rec, prec = test_prediction(model, test_loader)
+    log.report_single_value(name='Test roc_auc', value=float(roc_auc))
+    log.report_single_value(name='Test f1', value=float(f1))
+    log.report_single_value(name='Test accuracy', value=float(acc))
+    log.report_single_value(name='Test recall', value=float(rec))
+    log.report_single_value(name='Test precision', value=float(prec))
+

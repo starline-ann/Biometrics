@@ -4,13 +4,13 @@ import torchvision.transforms as transforms
 
 from src.get_filenames import get_filenames_from_json
 from src.dataset import CelebA_Spoof_Dataset
-from src.config import path_train_json, path_test_json, path_local
+from src.config import path_local
 from src.config import sample_percentage, batch_size
 
 
 # Prepare data
-x, y = get_filenames_from_json(path_train_json, sample_percentage)
-x_test, y_test = get_filenames_from_json(path_test_json, sample_percentage)
+x, y = get_filenames_from_json('train', sample_percentage)
+x_test, y_test = get_filenames_from_json('test', sample_percentage)
 
 # Split all data to train, validation and test datasets
 x_train, x_val, y_train, y_val = train_test_split(

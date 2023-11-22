@@ -5,6 +5,7 @@ import json
 from tqdm import tqdm
 import re
 from src.config import path_local, path_test_json, path_train_json, sample_percentage
+from src.config import path_unique_test_json, path_unique_train_json
 
 
 def deduplicate_dir(path: str):
@@ -75,7 +76,7 @@ if __name__ == "__main__":
     # take only unique spoof imgs
     df_spoof = get_unique_df(df_spoof)
     # save test df to json
-    result = df_spoof.to_json('data/unique_test_imgs.json')
+    result = df_spoof.to_json(path_unique_test_json)
 
     # train
     df = pd.read_json(path_train_json, orient="index")
@@ -86,4 +87,4 @@ if __name__ == "__main__":
     # take only unique spoof imgs
     df_spoof = get_unique_df(df_spoof)
     # save test df to json
-    result = df_spoof.to_json('data/unique_train_imgs.json')
+    result = df_spoof.to_json(path_unique_train_json)
