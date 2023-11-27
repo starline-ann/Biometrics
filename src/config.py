@@ -1,8 +1,11 @@
 # place data for prediction here
 files_path = "data/my_test/"
 
-# path to load/save best weights of model and inference
-weights_path = "data/weights4.pth"
+# path to load model for inference.ipynb
+onnx_path = "data/mobilenet.onnx"
+
+# path to load/save best weights of model for predict.py
+weights_path = "data/weights_small.pth"
 
 #train
 
@@ -29,4 +32,3 @@ fine_tuning_mode = '20' # ['10', 'classifier']
 project_name = 'Biometrics'
 task_name = 'exp5 unique'
 
-onnx_path = "data/mobilenet.onnx"

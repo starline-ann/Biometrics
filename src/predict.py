@@ -5,6 +5,7 @@ import torchvision.transforms as transforms
 from PIL import Image
 import numpy as np
 import os
+import re
 
 from src.config import weights_path, files_path
 
@@ -44,9 +45,7 @@ if __name__ == "__main__":
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     my_model.to(device)
 
-    files = []
-    for file in os.listdir(files_path):
-        files.append(str(file))
+    files = [f for f in os.listdir(files_path) if re.match(r'.+(\.jpg)\b|.+(\.jpeg)\b|.+(\.png)\b', f)]
 
     fake = []
     real = []
