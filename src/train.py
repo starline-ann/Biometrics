@@ -114,8 +114,8 @@ def train_model(train_loader, val_loader, model, criterion, opt, scheduler, epoc
             if val_acc > best_acc:
                 best_acc = val_acc
                 best_model_wts = copy.deepcopy(model.state_dict())
+                torch.save(best_model_wts, weights_path)
 
-    log.report_single_value(name='Best val Accuracy', value=best_acc)
     # load best model weights
     model.load_state_dict(best_model_wts)
 
@@ -142,6 +142,7 @@ def test_prediction(model, test_loader):
         all_labels = np.array(torch.cat(all_labels))
         return preds, all_labels
 
+
     preds, labels = predict(model, test_loader)
     y_pred = np.argmax(preds, axis=1)
     #corrects = y_pred == labels
@@ -156,6 +157,7 @@ def test_prediction(model, test_loader):
 
 if __name__ == "__main__":
     model = models.mobilenet_v3_small(weights="IMAGENET1K_V1")
+    #model = models.mobilenet_v3_large(weights='IMAGENET1K_V2')
 
     # Binary classification
     model.classifier[3] = torch.nn.Linear(
@@ -223,9 +225,9 @@ if __name__ == "__main__":
 
     # test
     roc_auc, f1, acc, rec, prec = test_prediction(model, test_loader)
-    log.report_single_value(name='Test roc_auc', value=float(roc_auc))
-    log.report_single_value(name='Test f1', value=float(f1))
-    log.report_single_value(name='Test accuracy', value=float(acc))
-    log.report_single_value(name='Test recall', value=float(rec))
-    log.report_single_value(name='Test precision', value=float(prec))
+    log.report_single_value(name='Roc_auc', value=float(roc_auc))
+    log.report_single_value(name='F1', value=float(f1))
+    log.report_single_value(name='Accuracy', value=float(acc))
+    log.report_single_value(name='Recall', value=float(rec))
+    log.report_single_value(name='Precision', value=float(prec))
 

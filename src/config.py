@@ -17,7 +17,7 @@ path_unique_test_json = 'data/unique_test_imgs.json'
 path_unique_train_json = 'data/unique_train_imgs.json'
 
 # the percent of data for training
-sample_percentage = 0.02
+sample_percentage = 0.1
 
 # training params
 batch_size = 512

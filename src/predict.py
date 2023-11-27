@@ -33,7 +33,9 @@ def predict_one_sample(model, inputs, device: str | torch.device = "cpu"):
 
 
 if __name__ == "__main__":
+    #my_model = models.mobilenet_v3_large()
     my_model = models.mobilenet_v3_small()
+    
     my_model.classifier[3] = nn.Linear(
         in_features=my_model.classifier[3].in_features, out_features=2
     )
@@ -61,6 +63,6 @@ if __name__ == "__main__":
             real.append(name_path[13:-4])
         else:
             fake.append(name_path[13:-4])
-    
+    print(weights_path)
     print('real:', *sorted(real))
     print('fake:', *sorted(fake))
